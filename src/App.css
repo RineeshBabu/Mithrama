@@ -1,0 +1,108 @@
+#root {
+  margin: 0 auto;
+ 
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+.app {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  width: 100%;
+}
+
+
+.bg-subtle-gradient {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
+}
+
+
+.bg-mesh-gradient {
+  background: linear-gradient(45deg, #f3f4f6 25%, transparent 25%),
+              linear-gradient(-45deg, #f3f4f6 25%, transparent 25%),
+              linear-gradient(45deg, transparent 75%, #f3f4f6 75%),
+              linear-gradient(-45deg, transparent 75%, #f3f4f6 75%);
+  background-size: 20px 20px;
+  background-color: #ffffff;
+}
+
+.bg-dots {
+  background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-color: #ffffff;
+}
+
+
+.bg-noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  background-color: #f8fafc;
+  opacity: 0.95;
+}
+
+
+.bg-stripes {
+  background: repeating-linear-gradient(
+    45deg,
+    #f8fafc,
+    #f8fafc 10px,
+    #f1f5f9 10px,
+    #f1f5f9 20px
+  );
+}
+
+
+.bg-modern-light {
+  background-color: #f8fafc;
+}
+
+.bg-modern-warm {
+  background-color: #faf5ef;
+}
+
+.bg-modern-cool {
+  background-color: #f0f4f8;
+}
+
