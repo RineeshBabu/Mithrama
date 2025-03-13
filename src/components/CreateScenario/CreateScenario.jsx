@@ -3,41 +3,70 @@ import {
   TextField,
   MenuItem,
   Box,
-  Typography,
-  Paper,
   FormControl,
   InputLabel,
   Select,
-  FormHelperText,
   Grid,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
 } from "@mui/material";
+import { AddCircleOutline, Edit, Visibility } from "@mui/icons-material";
 import CreateScenarioFields from "./CreateScenarioFields";
 
 const CreateScenario = ({
   countryList = ["India", "Spain"],
-  initialFormValues = {
+  initialFormValues,
+  scenarioType,
+}) => {
+  const defaultFormValues = {
     country: "",
     scenarioName: "",
     scenarioDesc: "",
-    scenarioParam: [],
-  },
-}) => {
-  const [form, setForm] = useState(initialFormValues);
-  const [scenarioParam, setScenarioParam] = useState(
-    initialFormValues.scenarioParam || []
-  );
+    scenarioParam: [
+      {
+        parameterType: "PREDEFINED",
+        valueText: "TEXT",
+        parameterName: "",
+        parameterDescription: "",
+        parameterValue: "",
+        country: "",
+        enumeratedValues: [],
+      },
+    ],
+  };
+
+  const [form, setForm] = useState(initialFormValues || defaultFormValues);
+  const [scenarioParam, setScenarioParam] = useState(form.scenarioParam);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    setForm(initialFormValues);
-    setScenarioParam(initialFormValues.scenarioParam || []);
+    if (initialFormValues) {
+      setForm(initialFormValues);
+      setScenarioParam(
+        initialFormValues.scenarioParam.map((param) => ({
+          ...param,
+          country: initialFormValues.country,
+        }))
+      );
+    }
   }, [initialFormValues]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setForm({
-      ...form,
+    setForm((prev) => ({
+      ...prev,
       [name]: value,
-    });
+    }));
+
+    if (name === "country") {
+      setScenarioParam((prevParams) =>
+        prevParams.map((param) => ({ ...param, country: value }))
+      );
+    }
   };
 
   const validateForm = () => {
@@ -53,76 +82,102 @@ const CreateScenario = ({
     }
   };
 
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
   return (
     <Box sx={{ width: "100%", px: 2 }}>
-      <Paper elevation={3} sx={{ p: 4, width: "100%", mt: 4 }}>
-        <Typography variant="h5" component="h2" gutterBottom>
-          Create New Scenario
-        </Typography>
+      <IconButton color="primary" onClick={handleOpen}>
+        {scenarioType === "CREATE" && <AddCircleOutline />}
+        {scenarioType === "EDIT" && <Edit />}
+        {scenarioType === "VIEW" && <Visibility />}
+      </IconButton>
 
-        <Box
-          component="form"
-          onSubmit={handleSubmit}
-          noValidate
-          sx={{ mt: 2, width: "100%" }}
-        >
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={4}>
-              <FormControl fullWidth margin="normal" required>
-                <InputLabel>Choose Country</InputLabel>
-                <Select
-                  name="country"
-                  value={form.country}
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
+        <DialogTitle>
+          {scenarioType === "CREATE"
+            ? "Create New Scenario"
+            : scenarioType === "EDIT"
+            ? "Edit Scenario"
+            : "View Scenario"}
+        </DialogTitle>
+        <DialogContent>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            noValidate
+            sx={{ mt: 2, width: "100%" }}
+          >
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={4}>
+                <FormControl fullWidth margin="normal" required>
+                  <InputLabel>Choose Country</InputLabel>
+                  <Select
+                    name="country"
+                    value={form.country}
+                    onChange={handleChange}
+                  >
+                    {countryList.map((country) => (
+                      <MenuItem key={country} value={country}>
+                        {country}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12} md={4}>
+                <TextField
+                  fullWidth
+                  margin="normal"
+                  required
+                  label="Scenario Name"
+                  name="scenarioName"
+                  value={form.scenarioName}
                   onChange={handleChange}
-                >
-                  {countryList.map((country) => (
-                    <MenuItem key={country} value={country}>
-                      {country}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+                />
+              </Grid>
+
+              <Grid item xs={12} md={4}>
+                <TextField
+                  fullWidth
+                  margin="normal"
+                  required
+                  label="Scenario Desc"
+                  name="scenarioDesc"
+                  value={form.scenarioDesc}
+                  onChange={handleChange}
+                />
+              </Grid>
             </Grid>
 
-            <Grid item xs={12} md={4}>
-              <TextField
-                fullWidth
-                margin="normal"
-                required
-                label="Scenario Name"
-                name="scenarioName"
-                value={form.scenarioName}
-                onChange={handleChange}
-              />
-            </Grid>
-
-            <Grid item xs={12} md={4}>
-              <TextField
-                fullWidth
-                margin="normal"
-                required
-                label="Scenario Desc"
-                name="scenarioDesc"
-                value={form.scenarioDesc}
-                onChange={handleChange}
-              />
-            </Grid>
-          </Grid>
-
-          <Typography variant="h6" sx={{ mt: 4 }}>
-            Scenario Parameters
-          </Typography>
-
-          <CreateScenarioFields
-            scenarioParam={scenarioParam}
-            setScenarioParam={setScenarioParam}
-          />
-
-          <Box sx={{ textAlign: "right", mt: 4 }}>
-            <button type="submit">Submit</button>
+            <CreateScenarioFields
+              country={scenarioParam.country}
+              scenarioParam={scenarioParam}
+              setScenarioParam={setScenarioParam}
+            />
           </Box>
-        </Box>
-      </Paper>
+        </DialogContent>
+        <DialogActions>
+          {scenarioType !== "VIEW" && (
+            <>
+              <Button
+                onClick={handleSubmit}
+                color="primary"
+                variant="contained"
+              >
+                Submit
+              </Button>
+              <Button color="secondary" variant="contained">
+                Save for Later
+              </Button>
+            </>
+          )}
+          <Button onClick={handleClose} color="default" variant="contained">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
