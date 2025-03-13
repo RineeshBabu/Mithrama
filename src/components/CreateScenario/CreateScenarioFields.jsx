@@ -27,12 +27,10 @@ const CreateScenarioFields = ({
       updatedParams[index].valueText = value;
 
       if (value === "TEXT") {
-        updatedParams[index].enumeratedValues = []; // Clear enumerated values
-        updatedParams[index].parameterValue = ""; // Ensure parameterValue is reset
+        updatedParams[index].enumeratedValues = [];
+        updatedParams[index].parameterValue = "";
       } else if (value === "LIST") {
-        updatedParams[index].parameterValue = null; // Reset single value
-
-        // Ensure enumeratedValues has at least one default row
+        updatedParams[index].parameterValue = null;
         if (
           !updatedParams[index].enumeratedValues ||
           updatedParams[index].enumeratedValues.length === 0
@@ -46,21 +44,19 @@ const CreateScenarioFields = ({
       updatedParams[index][name] = value;
     }
 
-    // Ensure the country is always set correctly
     updatedParams[index].country =
       country ||
       updatedParams[index].country ||
       scenarioParam[0]?.country ||
       "";
-
-    setScenarioParam([...updatedParams]); // Trigger re-render
+    setScenarioParam([...updatedParams]);
   };
 
   const handleAddRow = () => {
     setScenarioParam((prevParams) => [
       ...prevParams,
       {
-        country: country || prevParams[0]?.country || "", // Ensure country is set
+        country: country || prevParams[0]?.country || "",
         parameterType: "PREDEFINED",
         valueText: "TEXT",
         parameterName: "",
@@ -84,11 +80,32 @@ const CreateScenarioFields = ({
           elevation={3}
           sx={{ p: 2, mb: 2, borderRadius: 2, border: "1px solid #ddd" }}
         >
-          <Typography variant="h6" sx={{ mb: 2 }}>
-            Field {index + 1}
-          </Typography>
-
           <Grid container spacing={2} alignItems="center">
+            <Grid item xs={10}>
+              <Typography variant="h6">Field {index + 1}</Typography>
+            </Grid>
+
+            {/* Icons aligned to the far right */}
+            <Grid
+              item
+              xs={2}
+              sx={{ display: "flex", justifyContent: "flex-end" }}
+            >
+              {scenarioParam.length > 1 && (
+                <IconButton
+                  color="secondary"
+                  onClick={() => handleRemoveRow(index)}
+                >
+                  <RemoveCircleOutline />
+                </IconButton>
+              )}
+              {index === scenarioParam.length - 1 && (
+                <IconButton color="primary" onClick={handleAddRow}>
+                  <AddCircleOutline />
+                </IconButton>
+              )}
+            </Grid>
+
             <Grid item xs={2}>
               <FormControl fullWidth>
                 <InputLabel>Parameter Type</InputLabel>
@@ -149,22 +166,6 @@ const CreateScenarioFields = ({
                 />
               </Grid>
             )}
-
-            <Grid item xs={2}>
-              {scenarioParam.length > 1 && (
-                <IconButton
-                  color="secondary"
-                  onClick={() => handleRemoveRow(index)}
-                >
-                  <RemoveCircleOutline />
-                </IconButton>
-              )}
-              {index === scenarioParam.length - 1 && (
-                <IconButton color="primary" onClick={handleAddRow}>
-                  <AddCircleOutline />
-                </IconButton>
-              )}
-            </Grid>
           </Grid>
 
           {param.valueText === "LIST" && (
@@ -172,6 +173,7 @@ const CreateScenarioFields = ({
               paramIndex={index}
               scenarioParam={scenarioParam}
               setScenarioParam={setScenarioParam}
+              buttonOffset="10px" // Pass an offset value for consistent alignment
             />
           )}
         </Paper>
